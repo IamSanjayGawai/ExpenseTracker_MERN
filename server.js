@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const colors = require('colors');
 const connectDB = require('./config/connectDB');
+const userRoute = require('./routes/userRoute');
 //config dotenv
 dotenv.config();
 
@@ -12,15 +13,15 @@ connectDB();
 
 const app = express();
 
+
 //middlewares
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-//default route
-app.get('/', (req, res)=>{
-    res.send('hello world');
-})
+                                             
+app.use('/api/v1/users', userRoute);
+
 
 //port 
 const PORT  = process.env.PORT || 5000;
