@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Add this import for Axios
@@ -16,7 +16,7 @@ const Login = () => {
       setLoading(false);
       message.success('Login Successful');
 
-      localStorage.setItem('userInfo', JSON.stringify({ ...data.user, password: '' }));
+      localStorage.setItem('user', JSON.stringify({ ...data.user, password: '' }));
       navigate('/');
     } catch (error) {
       // Message.error(error.response.data.message)
@@ -24,6 +24,15 @@ const Login = () => {
       message.error('Invalid Credentials');
     }
   };
+
+
+  // prevent for if user login then user should not access register and login page till logout
+useEffect(() =>{
+
+  if(localStorage.getItem('user')){
+      navigate('/')
+  }  
+}, [navigate])
 
   return (
     <>

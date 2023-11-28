@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Form, Input, message} from 'antd';
 import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios'
@@ -29,6 +29,13 @@ const submitHandler = async (values) => {
  }
 }
 
+// prevent for if user login then user should not access register and login page till logout
+useEffect(() =>{
+
+    if(localStorage.getItem('user')){
+        navigate('/')
+    }  
+}, [navigate])
 
   return (
     <>
