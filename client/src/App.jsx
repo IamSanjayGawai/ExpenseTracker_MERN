@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
 import './App.css'
 import Homepage from './pages/Homepage'
@@ -12,12 +12,24 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path='/' element={<Homepage />} />
+      <Route path='/' element={ <ProtectedRoutes> <Homepage /> </ProtectedRoutes> } />
       <Route path='/register' element={<Register />} />
       <Route path='/login' element={<Login />} />
     </Routes>
     </>
   )
+}
+
+
+export function ProtectedRoutes (props) {
+
+  if(localStorage.getItem('user')){
+    return props.children
+  }
+  else{
+    return <Navigate to='/login' replace />
+  }
+
 }
 
 export default App
