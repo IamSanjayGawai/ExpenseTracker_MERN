@@ -12,9 +12,9 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path='/' element={ <ProtectedRoutes> <Homepage /> </ProtectedRoutes> } />
-      <Route path='/register' element={<Register />} />
-      <Route path='/login' element={<Login />} />
+      <Route path='/expense-tracker' element={ <ProtectedRoutes> <Homepage /> </ProtectedRoutes> } />
+      <Route path='/expense-tracker/user/register' element={<Register />} />
+      <Route path='/expense-tracker/user/login' element={<Login />} />
     </Routes>
     </>
   )
@@ -27,7 +27,7 @@ export function ProtectedRoutes (props) {
     return props.children
   }
   else{
-    return <Navigate to='/login' replace />
+    return <Navigate to='/expense-tracker/user/login' replace />
   }
 
 }

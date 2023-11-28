@@ -45,7 +45,7 @@ const Header = () => {
   enterLoading(1)
   localStorage.removeItem('user')
   message.success('Logout Successfully')
-  navigate('/login')
+  navigate('/expense-tracker/user/login')
   }
 
 
@@ -54,7 +54,7 @@ const Header = () => {
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light bx-sd2">
         <div className="container-fluid">
-          <Link className="navbar-brand text-white" to="/"><img src={Logo}/></Link>
+          <Link className="navbar-brand text-white" to="/expense-tracker"><img src={Logo}/></Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>

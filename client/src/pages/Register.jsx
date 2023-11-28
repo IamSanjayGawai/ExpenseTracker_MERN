@@ -20,7 +20,7 @@ const submitHandler = async (values) => {
      await axios.post('http://localhost:8080/api/v1/users/register', values)
      message.success('Registration Successfull')
     setLoading(false)
-    navigate('/login')
+    navigate('/expense-tracker/user/login')
  }
  catch(error){
     //  Message.error(error.response.data.message)
@@ -36,7 +36,7 @@ useEffect(() =>{
 
     if(localStorage.getItem('user')){
       
-        navigate('/')
+        navigate('/expense-tracker')
     }  
 }, [navigate])
 
@@ -60,7 +60,7 @@ useEffect(() =>{
             <Input  placeholder='Enter your password' required/>
         </Form.Item>
         <div className='d-flex justify-content-between'>
-            <Link to='/login'>Already Register? Click Here to Login </Link>
+            <Link to='/expense-tracker/user/login'>Already Register? Click Here to Login </Link>
             {
               loading ? <SubmitSpinner/> :
               <button className='btn btn-primary' htmlType='submit'>

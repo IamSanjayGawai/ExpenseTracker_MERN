@@ -18,7 +18,7 @@ const Login = () => {
       message.success('Login Successful');
 
       localStorage.setItem('user', JSON.stringify({ ...data.user, password: '' }));
-      navigate('/');
+      navigate('/expense-tracker');
     } catch (error) {
       // Message.error(error.response.data.message)
       setLoading(false);
@@ -31,7 +31,7 @@ const Login = () => {
 useEffect(() =>{
 
   if(localStorage.getItem('user')){
-      navigate('/')
+      navigate('/expense-tracker')
   }  
 }, [navigate])
 
@@ -54,7 +54,7 @@ useEffect(() =>{
             <Input type='password' placeholder='Enter your password' required />
           </Form.Item>
           <div className='d-flex justify-content-between'>
-            <Link to='/register'>Not a User? Click Here to Register </Link>
+            <Link to='/expense-tracker/user/register'>Not a User? Click Here to Register </Link>
             {
               loading ? <SubmitSpinner/> :
               <button className='btn btn-primary' htmlType='submit'>
