@@ -3,6 +3,7 @@ import { Form, Input, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Add this import for Axios
 import SubmitSpinner from '../components/SubmitSpinner';
+import Logo from  '../assets/logo/ExpenseTracker.png'
 
 const Login = () => {
   const navigate = useNavigate();
@@ -39,13 +40,18 @@ useEffect(() =>{
 
       <div className='register-page container-fluid d-flex justify-content-center'>
         <div className='row  d-flex justify-content-center' style={{height:'70%', width:'100%'}}>
-        <Form layout='vertical' onFinish={submitHandler} className='col-12 col-sm-8 col-md-6 col-lg-4 p-5 bx-sd2' >
-          <h1>Login</h1>
+        <Form layout='vertical' onFinish={submitHandler} className='col-12 col-sm-8 col-md-6 col-lg-4 p-4 bx-sd2' >
+          
+          <div className='d-flex justify-content-between'>
+          <img src={Logo}/>
+        <h4 className='text-center'>Login</h4>
+          </div>
+       <hr/>
           <Form.Item label='Email' name='email'>
-            <Input placeholder='Enter your email' />
+            <Input placeholder='Enter your email' required/>
           </Form.Item>
           <Form.Item label='Password' name='password'>
-            <Input type='password' placeholder='Enter your password' />
+            <Input type='password' placeholder='Enter your password' required />
           </Form.Item>
           <div className='d-flex justify-content-between'>
             <Link to='/register'>Not a User? Click Here to Register </Link>
