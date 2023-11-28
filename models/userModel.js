@@ -1,27 +1,20 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-
-
-    name:{
+    name: {
         type: String,
-        required: [true, ' name is required'],
-
+        required: [true, 'Name is required'],
     },
-    email:{
-        type:String,
-        required: [true, 'email is required and should be unique' ], 
-
-    },
-    password:{
+    email: {
         type: String,
-        required: [true, 'password is required'],
-
+        required: [true, 'Email is required and should be unique'],
+    },
+    password: {
+        type: String,
+        required: [true, 'Password is required'],
     }
+}, { timestamps: true }); // Use 'timestamps' instead of 'timespams'
 
-},{timespams: true});
+const userModel = mongoose.model('User', userSchema);
 
-
- const userModel = mongoose.model('User', userSchema);
-
- module.exports = userModel;
+module.exports = userModel;
