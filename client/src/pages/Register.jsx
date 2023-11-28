@@ -3,6 +3,8 @@ import {Form, Input, message} from 'antd';
 import {Link, useNavigate} from 'react-router-dom'
 import axios from 'axios'
 import SubmitSpinner from '../components/SubmitSpinner';
+import Logo from  '../assets/logo/ExpenseTracker.png'
+
 
 
 
@@ -33,6 +35,7 @@ const submitHandler = async (values) => {
 useEffect(() =>{
 
     if(localStorage.getItem('user')){
+      
         navigate('/')
     }  
 }, [navigate])
@@ -41,8 +44,12 @@ useEffect(() =>{
     <>
 <div className='register-page container-fluid d-flex justify-content-center'>
         <div className='row  d-flex justify-content-center' style={{height:'70%', width:'100%'}}>
-       <Form layout='vertical' onFinish={submitHandler} className='col-12 col-sm-8 col-md-6 col-lg-4 p-5 bx-sd2' > 
-       <h1>Register</h1>
+       <Form layout='vertical' onFinish={submitHandler} className='col-12 col-sm-8 col-md-6 col-lg-4 p-4 bx-sd2' > 
+       <div className='d-flex justify-content-between'>
+          <img src={Logo}/>
+        <h4 className='text-center'>Register</h4>
+          </div>
+       <hr/>
         <Form.Item label='Name' name='name'>
             <Input  placeholder='Enter your name' required />
         </Form.Item>
