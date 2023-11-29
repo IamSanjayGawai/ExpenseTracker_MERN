@@ -3,14 +3,17 @@ const transactionModel = require('../models/transactionModel')
 
 
 const getAlltransaction = async (req, res) => {
-  try{
-    const transactions = await transactionModel.find({});
-    res.status(200).json(transactions)
+  try {
+    const transactions = await transactionModel.find({ userid: req.body.userid });
+    console.log(req.body); // Log the request body for debugging
+    console.log(transactions)
+    res.status(200).json(transactions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  catch(error){
-    res.status(500).json(error)
-  }
-}
+};
+
 
 const addltransaction = async (req, res) => {
     try{
