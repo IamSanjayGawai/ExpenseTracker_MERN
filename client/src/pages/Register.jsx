@@ -36,15 +36,15 @@ useEffect(() =>{
 
     if(localStorage.getItem('user')){
       
-        navigate('/expense-tracker')
+        navigate('/')
     }  
 }, [navigate])
 
   return (
     <>
-<div className='register-page container-fluid d-flex justify-content-center'>
-        <div className='row  d-flex justify-content-center' style={{height:'70%', width:'100%'}}>
-       <Form layout='vertical' onFinish={submitHandler} className='col-12 col-sm-8 col-md-6 col-lg-4 p-4 bx-sd2' > 
+<div className='register-page container-fluid d-flex justify-content-center '>
+        <div className='row  d-flex justify-content-center ' style={{height:'70%', width:'100%'}}>
+       <Form layout='vertical' onFinish={submitHandler} className='col-12 col-sm-8 col-md-6 col-lg-4 p-4 bx-sd2 bg-white rounded' > 
        <div className='d-flex justify-content-between'>
           <img src={Logo}/>
         <h4 className='text-center'>Register</h4>

@@ -12,7 +12,7 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path='/expense-tracker' element={ <ProtectedRoutes> <Homepage /> </ProtectedRoutes> } />
+      <Route path='/' element={ <ProtectedRoutes> <Homepage /> </ProtectedRoutes> } />
       <Route path='/expense-tracker/user/register' element={<Register />} />
       <Route path='/expense-tracker/user/login' element={<Login />} />
     </Routes>
