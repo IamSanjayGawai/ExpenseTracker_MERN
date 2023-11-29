@@ -48,10 +48,10 @@ useEffect(() =>{
           </div>
        <hr/>
           <Form.Item label='Email' name='email'>
-            <Input placeholder='Enter your email' required/>
+            <Input  className='input-border'     style={{ borderColor: '#333' }} placeholder='Enter your email' required/>
           </Form.Item>
           <Form.Item label='Password' name='password'>
-            <Input type='password' placeholder='Enter your password' required />
+            <Input  className='input-border'     style={{ borderColor: '#333'}} type='password' placeholder='Enter your password' required  />
           </Form.Item>
           <div className='d-flex justify-content-between'>
             <Link to='/expense-tracker/user/register'>Not a User? Click Here to Register </Link>

@@ -12,25 +12,38 @@ const Header = () => {
   const navigate = useNavigate();
 
   // logout button function  from antd
-  const enterLoading = (index) => {
+  const handleLogout = () => {
+    // Set loading state to true
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
-      newLoadings[index] = true;
+      newLoadings[1] = true;
       return newLoadings;
     });
+  
+    // Remove user from local storage
+    localStorage.removeItem('user');
+  
+    // Simulate an asynchronous logout process (e.g., API request, etc.)
     setTimeout(() => {
+      // Set loading state back to false
       setLoadings((prevLoadings) => {
         const newLoadings = [...prevLoadings];
-        newLoadings[index] = false;
+        newLoadings[1] = false;
         return newLoadings;
       });
-    }, 6000);
+  
+      // Display success message
+      message.success('Logout Successfully');
+  
+      // Navigate to the login page
+      navigate('/expense-tracker/user/login');
+    }, 2000); // Adjust the timeout as needed (simulating an asynchronous action)
   };
-  // **************************************//
+  
 
 
 
-
+// getting user from localstorage for printing name in header
   useEffect(() => {
      const  user = JSON.parse(localStorage.getItem('user'));
 
@@ -40,14 +53,7 @@ const Header = () => {
 
   }, []);
 
-  // handlelogout
-  const handleLogout = () => {
-  enterLoading(1)
-  localStorage.removeItem('user')
-  message.success('Logout Successfully')
-  navigate('/expense-tracker/user/login')
-  }
-
+ 
 
   return (
    

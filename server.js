@@ -6,6 +6,7 @@ const cors = require('cors');
 const colors = require('colors');
 const connectDB = require('./config/connectDB');
 const userRoute = require('./routes/userRoute');
+const transactionRoute = require('./routes/transactionRoute');
 //config dotenv
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 
                                              
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/transactions', transactionRoute);
 
 
 //port 
