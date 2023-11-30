@@ -6,7 +6,7 @@ const transactionModel = require('../models/transactionModel')
 
 const getAlltransaction = async (req, res) => {
   try {
-    const { frequency, selectedDate } = req.body;
+    const { frequency, selectedDate, type } = req.body;
     console.log(selectedDate)
     const transactions = await transactionModel.find({
       ...(frequency !== 'custom'
@@ -22,6 +22,7 @@ const getAlltransaction = async (req, res) => {
             },
           }),
       userid: req.body.userid,
+      ...(type !== 'all' ? { type } : {})
     }).sort({ date: 'desc' });
 
     console.log(req.body); // Log the request body for debugging

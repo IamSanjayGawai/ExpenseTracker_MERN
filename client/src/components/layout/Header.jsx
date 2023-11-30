@@ -67,7 +67,7 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="navbarScroll">
             <ul className="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll gap-3" style={{ '--bs-scroll-height': '100px' }}>
               <li className="nav-item d-flex align-items-center">
-              <b><span className='text-dark'><UserOutlined /> {loginUser.name}</span></b> 
+              <b><span className='text-white'><UserOutlined /> {loginUser.name}</span></b> 
               </li>
               <li className="nav-item">
          
