@@ -22,7 +22,7 @@ const getAlltransaction = async (req, res) => {
             },
           }),
       userid: req.body.userid,
-    });
+    }).sort({ date: 'desc' });
 
     console.log(req.body); // Log the request body for debugging
     console.log(transactions);
