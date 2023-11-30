@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import { useState } from "react";
-import { Modal, Form, Select, message, Table } from "antd";
+import { Modal, Form, Select, message, Table, DatePicker } from "antd";
+const { RangePicker } = DatePicker;
+import moment from 'moment';
 import axios from "axios";
 import {useSelector, useDispatch} from 'react-redux'
 import {loadingSpinnerActive, setAllTransactions} from '../redux/expenseSlice.jsx'
@@ -11,6 +13,7 @@ const Homepage = () => {
   const [loading, setLoading] = useState(false);
   const [frequency, setFrequency] = useState("7");
   const [form] = Form.useForm(); // useform it is use for reset form data aftyer evry transaction
+  const [selectedDate, setSelectedDate] = useState({})
 
   const {loadingSpinner, allTransactions} = useSelector(state => state.expense);
   const dispatch = useDispatch();
@@ -21,6 +24,7 @@ const  columns = [
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
+      render: (text) => <span>{moment(text).format('YYYY-MM-DD')}</span>
 
   },
   {
@@ -58,23 +62,27 @@ const  columns = [
    
     
 useEffect(() => {
-        
   const getAllTransactions = async () => {
-      try {
-          const user = JSON.parse(localStorage.getItem('user'));
-          dispatch(loadingSpinnerActive(true))
-          const res = await axios.post('http://localhost:8080/api/v1/transactions/get-transaction', {userid: user._id, frequency});
-          dispatch(loadingSpinnerActive(false))
-          dispatch(setAllTransactions(res.data))
-      } catch (error) {
-          console.log(error);
-          message.error('Failed to fetch transactions');
-      }
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      dispatch(loadingSpinnerActive(true));
+      const res = await axios.post('http://localhost:8080/api/v1/transactions/get-transaction', {
+          userid: user._id,
+          frequency,
+          selectedDate 
+        });
+      console.log(selectedDate)
+      dispatch(loadingSpinnerActive(false));
+      dispatch(setAllTransactions(res.data));
+    } catch (error) {
+      console.log(error);
+      message.error('Failed to fetch transactions');
+    }
   }
+
   getAllTransactions();
-  
-  },[frequency,allTransactions])
-  
+
+}, [frequency, selectedDate]);
   // table data
 
 
@@ -123,6 +131,7 @@ form.resetFields();  // reset form data aftyer evry transaction
             <Select.Option value='365'>Last 1 Year</Select.Option>
             <Select.Option value='custom'>Custom</Select.Option>
           </Select>
+          {frequency === 'custom' && <RangePicker value={selectedDate} onChange={(values) => setSelectedDate(values)}/>}
         </div>
         <div>
 
