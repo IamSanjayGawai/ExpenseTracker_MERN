@@ -3,11 +3,81 @@ import Layout from "../components/layout/Layout";
 import { useState } from "react";
 import { Modal, Form, Select, message, Table } from "antd";
 import axios from "axios";
-import All_Transaction from "../components/All_Transaction";
+import {useSelector, useDispatch} from 'react-redux'
+import {loadingSpinnerActive, setAllTransactions} from '../redux/expenseSlice.jsx'
 
 const Homepage = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [frequency, setFrequency] = useState("7");
+  const [form] = Form.useForm(); // useform it is use for reset form data aftyer evry transaction
+
+  const {loadingSpinner, allTransactions} = useSelector(state => state.expense);
+  const dispatch = useDispatch();
+
+  
+const  columns = [
+  {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+
+  },
+  {
+      title: 'Amount',
+      dataIndex: 'amount',
+      key: 'amount',
+  },
+  {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+  },
+  {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+  },
+ 
+  {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+  },
+  // {
+  //     title: 'Reference',
+  //     dataIndex: 'reference',
+  //     key: 'reference',
+  // },
+  {
+      title: 'Actions',
+
+  },
+]
+
+   
+    
+useEffect(() => {
+        
+  const getAllTransactions = async () => {
+      try {
+          const user = JSON.parse(localStorage.getItem('user'));
+          dispatch(loadingSpinnerActive(true))
+          const res = await axios.post('http://localhost:8080/api/v1/transactions/get-transaction', {userid: user._id, frequency});
+          dispatch(loadingSpinnerActive(false))
+          dispatch(setAllTransactions(res.data))
+      } catch (error) {
+          console.log(error);
+          message.error('Failed to fetch transactions');
+      }
+  }
+  getAllTransactions();
+  
+  },[frequency,allTransactions])
+  
+  // table data
+
+
 
   // Handle form submission
   const handleSubmit = async (values) => {
@@ -18,15 +88,22 @@ const Homepage = () => {
         setLoading(false);
         message.success('Transaction Added Successfully');
         setShowModal(false);
+        form.resetFields(); // reset form data aftyer evry transaction
+      
     } catch (error) {
         message.error('Failed to Add Transaction');
     }
   };
 
 
+
   const handleModalCancel = () => {
-    setShowModal(false);
-    setLoading(false)
+setShowModal(false);
+setLoading(false)
+form.resetFields();  // reset form data aftyer evry transaction
+
+
+
   }
 
 
@@ -38,21 +115,35 @@ const Homepage = () => {
   return (
     <Layout>
       <div className="filters bx-sd3">
-        <div>Range Filters</div>
         <div>
-          {" "}
+          <h6>Select Frequency</h6>
+          <Select value={frequency} onChange={(values) => setFrequency(values) }>
+            <Select.Option value='7'>Last 1 Week</Select.Option>
+            <Select.Option value='30'>Last 1 Month</Select.Option>
+            <Select.Option value='365'>Last 1 Year</Select.Option>
+            <Select.Option value='custom'>Custom</Select.Option>
+          </Select>
+        </div>
+        <div>
+
           <button
             className="btn btn-primary text-white "
             onClick={() => setShowModal(true)}
           >
             Add New
-          </button>{" "}
+          </button>
         </div>
       </div>
 
 
 {/* showng  all data in table  */}
-   <All_Transaction />
+    
+<div className="content mt-3 ">
+   
+   <Table columns={columns} dataSource={allTransactions} bordered />
+
+ </div>
+
 {/* showng  all data in table  */}
 
 
@@ -63,7 +154,7 @@ const Homepage = () => {
         onCancel={handleModalCancel}
         footer={false}
       >
-        <Form layout="vertical" onFinish={handleSubmit}>
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item label="Amount" name="amount">
             <input type="number" className="form-control" />
           </Form.Item>
