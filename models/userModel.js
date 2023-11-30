@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Password is required'],
     }
-}, { timestamps: true }); // Use 'timestamps' instead of 'timespams'
+}, {timestamps: true}); // Use 'timestamps' instead of 'timespams'
 
 const userModel = mongoose.model('User', userSchema);
 

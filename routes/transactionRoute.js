@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/add-transaction', addltransaction);
 
 // get all transaction
-router.get('/get-transaction', getAlltransaction);
+router.post('/get-transaction', getAlltransaction);
 
 
 

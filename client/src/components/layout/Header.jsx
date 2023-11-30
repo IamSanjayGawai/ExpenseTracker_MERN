@@ -58,7 +58,7 @@ const Header = () => {
   return (
    
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light bx-sd2">
+      <nav className="navbar navbar-expand-lg  bx-sd2">
         <div className="container-fluid">
           <Link className="navbar-brand text-white" to="/"><img src={Logo}/></Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,10 +72,12 @@ const Header = () => {
               <li className="nav-item">
          
               <Button
+          className='bg-danger'
           type="primary"
           icon={<PoweroffOutlined />}
           loading={loadings[1]}
           onClick={handleLogout}
+         
         >
          Logout
         </Button>
