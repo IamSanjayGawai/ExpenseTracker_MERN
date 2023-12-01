@@ -58,7 +58,7 @@ const Header = () => {
   return (
    
     <>
-      <nav className="navbar navbar-expand-lg  bx-sd2">
+      <nav className="navbar navbar-expand-lg  bx-sd2 sticky-top px-3">
         <div className="container-fluid">
           <Link className="navbar-brand text-white" to="/"><img src={Logo}/></Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="navbarScroll">
             <ul className="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll gap-3" style={{ '--bs-scroll-height': '100px' }}>
               <li className="nav-item d-flex align-items-center">
-              <b><span className='text-dark'><UserOutlined /> {loginUser.name}</span></b> 
+              <b><span className='text-white'><UserOutlined /> {loginUser.name}</span></b> 
               </li>
               <li className="nav-item">
          

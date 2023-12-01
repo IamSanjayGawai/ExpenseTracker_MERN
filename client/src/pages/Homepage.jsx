@@ -3,213 +3,380 @@ import Layout from "../components/layout/Layout";
 import { useState } from "react";
 import { Modal, Form, Select, message, Table, DatePicker } from "antd";
 const { RangePicker } = DatePicker;
-import moment from 'moment';
+import {
+  UnorderedListOutlined,
+  AreaChartOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import moment from "moment";
 import axios from "axios";
-import {useSelector, useDispatch} from 'react-redux'
-import {loadingSpinnerActive, setAllTransactions} from '../redux/expenseSlice.jsx'
+import { useSelector, useDispatch } from "react-redux";
+import { setAllTransactions } from "../redux/expenseSlice.jsx";
+import Spinner from "../components/Spinner.jsx";
+import Analytics from "../components/Analytics.jsx";
 
 const Homepage = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingCenterSpinner, setLoadingCenterSpinner] = useState(false); // for center spinner
   const [frequency, setFrequency] = useState("7");
   const [form] = Form.useForm(); // useform it is use for reset form data aftyer evry transaction
-  const [selectedDate, setSelectedDate] = useState({})
+  const [selectedDate, setSelectedDate] = useState({});
+  const [type, setType] = useState("all"); // expense and income filter
+  const [viewData, setViewData] = useState("table"); // for view data
 
-  const {loadingSpinner, allTransactions} = useSelector(state => state.expense);
+///////////////////////////////////////////////////////////////////////////
+  // for showing transaction count per page
+  const paginationOptions = {
+    pageSize: 5,
+    showSizeChanger: false,
+  };
+
+  const tableScrollOptions = {
+    x: "max-content", // Set the width to 'max-content' to allow horizontal scrolling
+  };
+///////////////////////////////////////////////////////////////////////////
+  const { loadingSpinner, allTransactions } = useSelector(
+    (state) => state.expense
+  );
   const dispatch = useDispatch();
 
-  
-const  columns = [
-  {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (text) => <span>{moment(text).format('YYYY-MM-DD')}</span>
+  const columns = [
+    {
+      title: <b>Date</b>,
+      dataIndex: "date",
+      key: "date",
+      render: (text) => (
+        <b>
+          {" "}
+          <span>{moment(text).format("YYYY-MM-DD")}</span>
+        </b>
+      ),
+    },
+    {
+      title: <b>Amount ₹</b>,
+      dataIndex: "amount",
+      key: "amount",
+      render: (text, record) => ({
+        props: {
+          style: {
+            background:
+              record.type === "expense"
+                ? "	#FFDAB9"
+                : "	#98FB98",
+          },
+        },
+        children: (
+          <b>
+            <span
+              className={`${record.type === "expense" ? "price-text-red" : "price-text-green"} ${
+                record.type === "expense" ? "expense-amount" : ""
+              }`}
+            >
+              <span className="text-dark">
+                {record.type === "expense" ? "- ₹" : "+₹"}
+              </span>
+              {text}
+            </span>
+          </b>
+        ),
+      }),
+    },
 
-  },
-  {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-  },
-  {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
-  },
-  {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'category',
-  },
- 
-  {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-  },
-  // {
-  //     title: 'Reference',
-  //     dataIndex: 'reference',
-  //     key: 'reference',
-  // },
-  {
-      title: 'Actions',
+    {
+      title: <b>Type</b>,
+      dataIndex: "type",
+      key: "type",
+      render: (text) => (
+        <b>
+          <span
+            className="text-capitalize"
+            style={{ color: text === "expense" ? "red" : "lime" }}
+          >
+            {text}
+          </span>
+        </b>
+      ),
+    },
+    {
+      title: <b>Category</b>,
+      dataIndex: "category",
+      key: "category",
+      render: (text) => (
+        <b>
+          <span className="text-capitalize">{text}</span>
+        </b>
+      ),
+    },
 
-  },
-]
+    {
+      title: <b>Description</b>,
+      dataIndex: "description",
+      key: "description",
+      render: (text) => <span className="text-capitalize">{text}</span>,
+    },
+    // {
+    //     title: 'Reference',
+    //     dataIndex: 'reference',
+    //     key: 'reference',
+    // },
+    {
+      title: <b>Actions</b>,
+      render: (text, record) => (
+        <div className="d-flex gap-3">
+          <EditOutlined
+            className="text-primary "
+            onClick={() => {
+              setEditable(record);
+              setShowEditModal(true);
+            }}
+          />
+          <DeleteOutlined
+            className="text-danger"
+            onClick={() => {
+              handleDelete(record);
+            }}
+          />
+        </div>
+      ),
+    },
+  ];
 
-   
-    
-useEffect(() => {
-  const getAllTransactions = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      dispatch(loadingSpinnerActive(true));
-      const res = await axios.post('http://localhost:8080/api/v1/transactions/get-transaction', {
-          userid: user._id,
-          frequency,
-          selectedDate 
-        });
-      console.log(selectedDate)
-      dispatch(loadingSpinnerActive(false));
-      dispatch(setAllTransactions(res.data));
-    } catch (error) {
-      console.log(error);
-      message.error('Failed to fetch transactions');
-    }
-  }
+  useEffect(() => {
+    const getAllTransactions = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setLoading(true);
+        setLoadingCenterSpinner(true);
+        const res = await axios.post(
+          "http://localhost:8080/api/v1/transactions/get-transaction",
+          {
+            userid: user._id,
+            frequency,
+            selectedDate,
+            type,
+          }
+        );
+        // console.log(selectedDate);
+        setLoadingCenterSpinner(false);
+        setLoading(false);
+        dispatch(setAllTransactions(res.data));
+      } catch (error) {
+        console.log(error);
+        message.error("Failed to fetch transactions");
+      }
+    };
 
-  getAllTransactions();
-
-}, [frequency, selectedDate]);
+    getAllTransactions();
+  }, [frequency, selectedDate, type]);
   // table data
-
-
 
   // Handle form submission
   const handleSubmit = async (values) => {
     try {
-         const user = JSON.parse(localStorage.getItem('user'));
-        setLoading(true);
-        await axios.post('http://localhost:8080/api/v1/transactions/add-transaction', {...values, userid: user._id })
-        setLoading(false);
-        message.success('Transaction Added Successfully');
-        setShowModal(false);
-        form.resetFields(); // reset form data aftyer evry transaction
-      
+      const user = JSON.parse(localStorage.getItem("user"));
+      setLoading(true);
+      setLoadingCenterSpinner(true);
+      await axios.post(
+        "http://localhost:8080/api/v1/transactions/add-transaction",
+        { ...values, userid: user._id }
+      );
+      setLoading(false);
+      setLoadingCenterSpinner(false);
+      message.success("Transaction Added Successfully");
+      setShowModal(false);
+      form.resetFields(); // reset form data aftyer evry transaction
+      // Fetch updated transactions after a successful transaction addition
+      const res = await axios.post(
+        "http://localhost:8080/api/v1/transactions/get-transaction",
+        {
+          userid: user._id,
+          frequency,
+          selectedDate,
+          type,
+        }
+      );
+      dispatch(setAllTransactions(res.data));
     } catch (error) {
-        message.error('Failed to Add Transaction');
+      message.error("Failed to Add Transaction");
     }
   };
 
-
-
   const handleModalCancel = () => {
-setShowModal(false);
-setLoading(false)
-form.resetFields();  // reset form data aftyer evry transaction
-
-
-
-  }
-
-
-
-
-
-
+    setShowModal(false);
+    setLoading(false);
+    form.resetFields(); // reset form data aftyer evry transaction
+  };
 
   return (
     <Layout>
-      <div className="filters bx-sd3">
-        <div>
-          <h6>Select Frequency</h6>
-          <Select value={frequency} onChange={(values) => setFrequency(values) }>
-            <Select.Option value='7'>Last 1 Week</Select.Option>
-            <Select.Option value='30'>Last 1 Month</Select.Option>
-            <Select.Option value='365'>Last 1 Year</Select.Option>
-            <Select.Option value='custom'>Custom</Select.Option>
-          </Select>
-          {frequency === 'custom' && <RangePicker value={selectedDate} onChange={(values) => setSelectedDate(values)}/>}
-        </div>
-        <div>
-
-          <button
-            className="btn btn-primary text-white "
-            onClick={() => setShowModal(true)}
-          >
-            Add New
-          </button>
-        </div>
-      </div>
-
-
-{/* showng  all data in table  */}
-    
-<div className="content mt-3 ">
-   
-   <Table columns={columns} dataSource={allTransactions} bordered />
-
- </div>
-
-{/* showng  all data in table  */}
-
-
-      {/* Start Model */}
-      <Modal
-        title="Add Transaction"
-        open={showModal}
-        onCancel={handleModalCancel}
-        footer={false}
+      <div
+        className="d-flex flex-column justify-content-center"
+        style={{ width: "100%" }}
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item label="Amount" name="amount">
-            <input type="number" className="form-control" />
-          </Form.Item>
-          <Form.Item label="Type" name="type">
-            <Select>
+        {/* Filter Start End */}
+        <div className="filters bx-sd3">
+          <div>
+            <h6>Select Frequency</h6>
+            <Select
+              value={frequency}
+              onChange={(values) => setFrequency(values)}
+              style={{ width: "8rem" }}
+            >
+              <Select.Option value="7">Last 1 Week</Select.Option>
+              <Select.Option value="30">Last 1 Month</Select.Option>
+              <Select.Option value="365">Last 1 Year</Select.Option>
+              <Select.Option value="custom">Custom</Select.Option>
+            </Select>
+            {frequency === "custom" && (
+              <RangePicker
+                value={selectedDate}
+                onChange={(values) => setSelectedDate(values)}
+              />
+            )}
+          </div>
+
+          <div>
+            <h6>Select Type</h6>
+            <Select
+              value={type}
+              onChange={(values) => setType(values)}
+              style={{ width: "6rem" }}
+            >
+              <Select.Option value="all">All</Select.Option>
               <Select.Option value="income">Income</Select.Option>
               <Select.Option value="expense">Expense</Select.Option>
             </Select>
-          </Form.Item>
-          <Form.Item label="Category" name="category">
-            <Select>
-              <Select.Option value="salary">Salary</Select.Option>
-              <Select.Option value="tip">Tip</Select.Option>
-              <Select.Option value="freeLance">Freelance</Select.Option>
-              <Select.Option value="food">Food</Select.Option>
-              <Select.Option value="movie">Movie</Select.Option>
-              <Select.Option value="bills">Bills</Select.Option>
-              <Select.Option value="medical">Medical</Select.Option>
-              <Select.Option value="fees">Fees</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Date" name="date">
-            <input type="date" className="form-control" />
-          </Form.Item>
-          <Form.Item label="Description" name="description">
-            <input type="text" className="form-control" />
-          </Form.Item>
-          {/* <Form.Item label="Reference" name="reference">
-            <input type="text" className="form-control" />
-          </Form.Item> */}
-          <div className="d-flex justify-content-end">
-            
-            <button className="btn btn-primary" type="submit"  disabled={loading}>
-              <span
-                className={loading ? "spinner-border spinner-border-sm" : " "}
-                role="status"
-                aria-hidden="true"
-              />
-            {loading ?  'Saving...' : "Save"}
+          </div>
+
+          {/* chart filters */}
+          <div className="mx-2 text-white border border-white p-2 rounded">
+            <UnorderedListOutlined
+              className={`mx-2 fs-3 ${
+                viewData === "table" ? "active-icon" : "inactive-icon"
+              }`}
+              onClick={() => setViewData("table")}
+            />
+            <AreaChartOutlined
+              className={`mx-2 fs-3 ${
+                viewData === "analytics" ? "active-icon" : "inactive-icon"
+              }`}
+              onClick={() => setViewData("analytics")}
+            />
+          </div>
+
+          <div>
+            <button
+              className="btn btn-primary text-white "
+              onClick={() => setShowModal(true)}
+            >
+              Add New
             </button>
           </div>
-        </Form>
-      </Modal>
-      {/* End Model */}
+        </div>
+        {/* Filter Div End */}
+
+        {/* showng  all data in table  */}
+        {loadingCenterSpinner ? (
+          <Spinner />
+        ) : (
+          <div
+            className="container-fluid content mt-3  "
+            style={{ width: "100%" }}
+          >
+            {viewData == "table" ? (
+              <Table
+                columns={columns}
+                dataSource={allTransactions}
+                bordered
+                style={{ overflow: "hidden", overflowX: "auto" }}
+                pagination={paginationOptions}
+                scroll={tableScrollOptions}
+              />
+            ) : (
+              <Analytics allTransactions={allTransactions} />
+            )}
+          </div>
+        )}
+        {/* showng  all data in table end  */}
+
+        {/* Start Model */}
+        <Modal
+          title="Add Transaction"
+          open={showModal}
+          onCancel={handleModalCancel}
+          footer={false}
+        >
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            <Form.Item label="Amount" name="amount" required>
+              <input type="number" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Type" name="type" required>
+              <Select>
+                <Select.Option value="income">Income</Select.Option>
+                <Select.Option value="expense">Expense</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Category" name="category" required>
+              <Select>
+                <Select.Option value="salary">Salary</Select.Option>
+                <Select.Option value="tip">Tip</Select.Option>
+                <Select.Option value="freeLance">Freelance</Select.Option>
+                <Select.Option value="food">Food</Select.Option>
+                <Select.Option value="movie">Movie</Select.Option>
+                <Select.Option value="bills">Bills</Select.Option>
+                <Select.Option value="medical">Medical</Select.Option>
+                <Select.Option value="grocery">Grocery</Select.Option>
+                <Select.Option value="shopping">Shopping</Select.Option>
+                <Select.Option value="travel">Travel</Select.Option>
+                <Select.Option value="other">Other</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Date" name="date" required>
+              <input type="date" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Description (Optional)" name="description">
+              <input type="text" className="form-control" />
+            </Form.Item>
+            {/* <Form.Item label="Reference" name="reference">
+            <input type="text" className="form-control" />
+          </Form.Item> */}
+
+            <div className="d-flex justify-content-end">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
+                <span
+                  className={loading ? "spinner-border spinner-border-sm" : " "}
+                  role="status"
+                  aria-hidden="true"
+                />
+                {loading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </Form>
+        </Modal>
+        {/* End Model */}
+      </div>
     </Layout>
   );
 };
 
 export default Homepage;
+
+// Ant Design table cell Color
+
+// {
+//   title: <b>Amount ₹</b>,
+//   dataIndex: 'amount',
+//   key: 'amount',
+//   render: (text, record) => ({
+//     props: {
+//       style: { background: parseInt(text) > 50 ? 'red' : 'green' },
+//     },
+//     children: <div>{text}</div>,
+//   }),
+// },
