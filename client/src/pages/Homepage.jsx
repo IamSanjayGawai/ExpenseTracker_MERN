@@ -12,9 +12,7 @@ import {
 import moment from "moment";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setAllTransactions
-} from "../redux/expenseSlice.jsx";
+import { setAllTransactions } from "../redux/expenseSlice.jsx";
 import Spinner from "../components/Spinner.jsx";
 import Analytics from "../components/Analytics.jsx";
 
@@ -26,18 +24,19 @@ const Homepage = () => {
   const [form] = Form.useForm(); // useform it is use for reset form data aftyer evry transaction
   const [selectedDate, setSelectedDate] = useState({});
   const [type, setType] = useState("all"); // expense and income filter
-  const [viewData, setViewData] = useState('table'); // for view data
+  const [viewData, setViewData] = useState("table"); // for view data
 
+///////////////////////////////////////////////////////////////////////////
+  // for showing transaction count per page
   const paginationOptions = {
     pageSize: 5,
     showSizeChanger: false,
   };
 
-
   const tableScrollOptions = {
-    x: 'max-content', // Set the width to 'max-content' to allow horizontal scrolling
-  }
-
+    x: "max-content", // Set the width to 'max-content' to allow horizontal scrolling
+  };
+///////////////////////////////////////////////////////////////////////////
   const { loadingSpinner, allTransactions } = useSelector(
     (state) => state.expense
   );
@@ -64,19 +63,19 @@ const Homepage = () => {
           style: {
             background:
               record.type === "expense"
-                ? "rgb(247,149,147)"
-                : "rgb(203,247,184)",
+                ? "	#FFDAB9"
+                : "	#98FB98",
           },
         },
         children: (
           <b>
             <span
-              className={`text-dark ${
+              className={`${record.type === "expense" ? "price-text-red" : "price-text-green"} ${
                 record.type === "expense" ? "expense-amount" : ""
               }`}
             >
-              <span className="text-primary">
-                {record.type === "expense" ? "- ₹" : "₹"}
+              <span className="text-dark">
+                {record.type === "expense" ? "- ₹" : "+₹"}
               </span>
               {text}
             </span>
@@ -127,15 +126,14 @@ const Homepage = () => {
       render: (text, record) => (
         <div className="d-flex gap-3">
           <EditOutlined
-            className='text-primary ' 
+            className="text-primary "
             onClick={() => {
               setEditable(record);
               setShowEditModal(true);
-           
             }}
           />
           <DeleteOutlined
-            className='text-danger' 
+            className="text-danger"
             onClick={() => {
               handleDelete(record);
             }}
@@ -213,168 +211,161 @@ const Homepage = () => {
 
   return (
     <Layout>
-
-        <div
-          className="d-flex flex-column justify-content-center"
-          style={{ width: "100%" }}>
-            
-            
-            {/* Filter Start End */}
-          <div className="filters bx-sd3">
-            <div>
-              <h6>Select Frequency</h6>
-              <Select
-                value={frequency}
-                onChange={(values) => setFrequency(values)}
-              >
-                <Select.Option value="7">Last 1 Week</Select.Option>
-                <Select.Option value="30">Last 1 Month</Select.Option>
-                <Select.Option value="365">Last 1 Year</Select.Option>
-                <Select.Option value="custom">Custom</Select.Option>
-              </Select>
-              {frequency === "custom" && (
-                <RangePicker
-                  value={selectedDate}
-                  onChange={(values) => setSelectedDate(values)}
-                />
-              )}
-            </div>
-
-            <div>
-              <h6>Select Type</h6>
-              <Select
-                value={type}
-                onChange={(values) => setType(values)}
-                style={{ width: "6rem" }}
-              >
-                <Select.Option value="all">All</Select.Option>
-                <Select.Option value="income">Income</Select.Option>
-                <Select.Option value="expense">Expense</Select.Option>
-              </Select>
-             
-            </div>
-
-              {/* chart filters */}
-              <div className="mx-2 text-white border border-white p-2 rounded">
-             < UnorderedListOutlined  className={`mx-2 fs-3 ${viewData === 'table' ? 'active-icon': 'inactive-icon'}`}  onClick={()=> setViewData('table')}/>
-              <AreaChartOutlined className={`mx-2 fs-3 ${viewData === 'analytics' ? 'active-icon': 'inactive-icon'}`} onClick={()=> setViewData('analytics')}/>
-              </div>
-
-
-              
-            <div>
-              <button
-                className="btn btn-primary text-white "
-                onClick={() => setShowModal(true)}
-              >
-                Add New
-              </button>
-            </div>
+      <div
+        className="d-flex flex-column justify-content-center"
+        style={{ width: "100%" }}
+      >
+        {/* Filter Start End */}
+        <div className="filters bx-sd3">
+          <div>
+            <h6>Select Frequency</h6>
+            <Select
+              value={frequency}
+              onChange={(values) => setFrequency(values)}
+              style={{ width: "8rem" }}
+            >
+              <Select.Option value="7">Last 1 Week</Select.Option>
+              <Select.Option value="30">Last 1 Month</Select.Option>
+              <Select.Option value="365">Last 1 Year</Select.Option>
+              <Select.Option value="custom">Custom</Select.Option>
+            </Select>
+            {frequency === "custom" && (
+              <RangePicker
+                value={selectedDate}
+                onChange={(values) => setSelectedDate(values)}
+              />
+            )}
           </div>
-          {/* Filter Div End */}
 
+          <div>
+            <h6>Select Type</h6>
+            <Select
+              value={type}
+              onChange={(values) => setType(values)}
+              style={{ width: "6rem" }}
+            >
+              <Select.Option value="all">All</Select.Option>
+              <Select.Option value="income">Income</Select.Option>
+              <Select.Option value="expense">Expense</Select.Option>
+            </Select>
+          </div>
 
+          {/* chart filters */}
+          <div className="mx-2 text-white border border-white p-2 rounded">
+            <UnorderedListOutlined
+              className={`mx-2 fs-3 ${
+                viewData === "table" ? "active-icon" : "inactive-icon"
+              }`}
+              onClick={() => setViewData("table")}
+            />
+            <AreaChartOutlined
+              className={`mx-2 fs-3 ${
+                viewData === "analytics" ? "active-icon" : "inactive-icon"
+              }`}
+              onClick={() => setViewData("analytics")}
+            />
+          </div>
 
-          {/* showng  all data in table  */}
-          { loadingCenterSpinner ? 
-          (  <Spinner />)
-            : 
+          <div>
+            <button
+              className="btn btn-primary text-white "
+              onClick={() => setShowModal(true)}
+            >
+              Add New
+            </button>
+          </div>
+        </div>
+        {/* Filter Div End */}
 
-         (  <div
+        {/* showng  all data in table  */}
+        {loadingCenterSpinner ? (
+          <Spinner />
+        ) : (
+          <div
             className="container-fluid content mt-3  "
             style={{ width: "100%" }}
           >
-           { viewData == 'table' ? 
-            <Table
-              columns={columns}
-              dataSource={allTransactions}
-              bordered
-              style={{ overflow: "hidden", overflowX: "auto" }}
-              pagination={paginationOptions}
-              scroll={tableScrollOptions}
-            />
-           :
-           <Analytics allTransactions={allTransactions}/>
-          }
+            {viewData == "table" ? (
+              <Table
+                columns={columns}
+                dataSource={allTransactions}
+                bordered
+                style={{ overflow: "hidden", overflowX: "auto" }}
+                pagination={paginationOptions}
+                scroll={tableScrollOptions}
+              />
+            ) : (
+              <Analytics allTransactions={allTransactions} />
+            )}
           </div>
-          )
+        )}
+        {/* showng  all data in table end  */}
 
-        }
-          {/* showng  all data in table end  */}
-
-
-
-          {/* Start Model */}
-          <Modal
-            title="Add Transaction"
-            open={showModal}
-            onCancel={handleModalCancel}
-            footer={false}
-          >
-            <Form form={form} layout="vertical" onFinish={handleSubmit}>
-              <Form.Item label="Amount" name="amount" required>
-                <input type="number" className="form-control" required />
-              </Form.Item>
-              <Form.Item label="Type" name="type" required>
-                <Select >
-                  <Select.Option value="income">Income</Select.Option>
-                  <Select.Option value="expense">Expense</Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item label="Category" name="category" required>
-                <Select>
-                  <Select.Option value="salary">Salary</Select.Option>
-                  <Select.Option value="tip">Tip</Select.Option>
-                  <Select.Option value="freeLance">Freelance</Select.Option>
-                  <Select.Option value="food">Food</Select.Option>
-                  <Select.Option value="movie">Movie</Select.Option>
-                  <Select.Option value="bills">Bills</Select.Option>
-                  <Select.Option value="medical">Medical</Select.Option>
-                  <Select.Option value="fees">Fees</Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item label="Date" name="date" required>
-                <input type="date" className="form-control" required/>
-              </Form.Item>
-              <Form.Item label="Description (Optional)" name="description">
-                <input type="text" className="form-control" />
-              </Form.Item>
-              {/* <Form.Item label="Reference" name="reference">
+        {/* Start Model */}
+        <Modal
+          title="Add Transaction"
+          open={showModal}
+          onCancel={handleModalCancel}
+          footer={false}
+        >
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            <Form.Item label="Amount" name="amount" required>
+              <input type="number" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Type" name="type" required>
+              <Select>
+                <Select.Option value="income">Income</Select.Option>
+                <Select.Option value="expense">Expense</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Category" name="category" required>
+              <Select>
+                <Select.Option value="salary">Salary</Select.Option>
+                <Select.Option value="tip">Tip</Select.Option>
+                <Select.Option value="freeLance">Freelance</Select.Option>
+                <Select.Option value="food">Food</Select.Option>
+                <Select.Option value="movie">Movie</Select.Option>
+                <Select.Option value="bills">Bills</Select.Option>
+                <Select.Option value="medical">Medical</Select.Option>
+                <Select.Option value="grocery">Grocery</Select.Option>
+                <Select.Option value="shopping">Shopping</Select.Option>
+                <Select.Option value="travel">Travel</Select.Option>
+                <Select.Option value="other">Other</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Date" name="date" required>
+              <input type="date" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Description (Optional)" name="description">
+              <input type="text" className="form-control" />
+            </Form.Item>
+            {/* <Form.Item label="Reference" name="reference">
             <input type="text" className="form-control" />
           </Form.Item> */}
-          
-              <div className="d-flex justify-content-end">
-                <button
-                  className="btn btn-primary"
-                  type="submit"
-                  disabled={loading}
-                >
-                  <span
-                    className={
-                      loading ? "spinner-border spinner-border-sm" : " "
-                    }
-                    role="status"
-                    aria-hidden="true"
-                  />
-                  {loading ? "Saving..." : "Save"}
-                </button>
-              </div>
-            </Form>
-          </Modal>
-          {/* End Model */}
-        </div>
-      
+
+            <div className="d-flex justify-content-end">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
+                <span
+                  className={loading ? "spinner-border spinner-border-sm" : " "}
+                  role="status"
+                  aria-hidden="true"
+                />
+                {loading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </Form>
+        </Modal>
+        {/* End Model */}
+      </div>
     </Layout>
   );
 };
 
 export default Homepage;
-
-
-
-
-
-
 
 // Ant Design table cell Color
 

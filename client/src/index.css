@@ -7,7 +7,7 @@
 .content{
 
   overflow: hidden;
-  height:78vh;
+  height:77.5vh;
 
 
 }
@@ -30,7 +30,7 @@
 }
 .bx-sd2{
   box-shadow: rgba(236, 236, 236, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px, rgba(17, 17, 26, 0.1) 0px 24px 80px;
-  background-color: rgb(30, 5, 255);
+  background-color:	#000080;
 
 }
 
@@ -38,7 +38,10 @@
 box-shadow: 0px 25px 80px rgba(189, 189, 189, 0.3);
 background-color: rgb(41, 41, 41);
 
+}
 
+.bx-sd4{
+  box-shadow: 0 1px 1px rgba(0,0,0,0.15), 0 2px 2px rgba(0,0,0,0.15), 0 4px 4px rgba(0,0,0,0.15), 0 8px 8px rgba(0,0,0,0.15);
 }
 
 /* input field border */
@@ -53,7 +56,6 @@ background-color: rgb(41, 41, 41);
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  margin-top: 1rem;
   color: white;
 }
 
@@ -61,9 +63,28 @@ background-color: rgb(41, 41, 41);
 /* /active icons */
 
 .active-icon {
-   color: lime;
+   color: rgb(0, 187, 255);
 }
 
 .inactive-icon {
    color: rgb(255, 255, 255);
+}
+
+/* Transaction Price text */
+.price-text-red{
+  color: 	#FF0000;
+  font-size: 0.9rem;
+
+
+}
+
+.price-text-green{
+  color:	#32CD32;
+font-size: 0.9rem;
+
+}
+
+/* footer background */
+.footer-bg{
+background-color: 	#000080;
 }
