@@ -58,7 +58,7 @@ const Header = () => {
   return (
    
     <>
-      <nav className="navbar navbar-expand-lg  bx-sd2">
+      <nav className="navbar navbar-expand-lg  bx-sd2 sticky-top">
         <div className="container-fluid">
           <Link className="navbar-brand text-white" to="/"><img src={Logo}/></Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
