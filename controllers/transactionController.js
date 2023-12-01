@@ -35,7 +35,7 @@ const getAlltransaction = async (req, res) => {
 };
 
 
-const addltransaction = async (req, res) => {
+const addtransaction = async (req, res) => {
     try{
         const newTransaction = new transactionModel(req.body)
 
@@ -47,6 +47,29 @@ const addltransaction = async (req, res) => {
         res.status(500).json(error)
     }
 }
+// edit Controller
+const edittransaction = async (req, res) =>{
+try{
+  await transactionModel.findByIdAndUpdate({_id:req.body.transactionId}, req.body.payload)
+  res.status(200).send('Transaction Updated')
+}
+catch(error){
+console.log(error)
+res.status(500).json(error)
+}
+}
 
+// delete Controller
+const deletetransaction = async (req, res) =>{
+  try{
+    await transactionModel.findOneAndDelete({_id:req.body.transactionId})
+    res.status(200).send('Transaction Deleted')
+  }
+  catch(error){
+  console.log(error)
+  res.status(500).json(error)
+  }
+  }
+  
 
-module.exports = {getAlltransaction,addltransaction }
+module.exports = {getAlltransaction,addtransaction , edittransaction, deletetransaction}
