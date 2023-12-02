@@ -16,12 +16,19 @@ const app = express();
 
 
 //middlewares
-app.use(cors());
+const corsOptions = {
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  };
+
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 
 app.get('/', (req, res)=>{
-    res.send('API is running');
+    res.send(<h2>API is running</h2>)
+    ;
 })
                                              
 app.use('/api/v1/users', userRoute);
