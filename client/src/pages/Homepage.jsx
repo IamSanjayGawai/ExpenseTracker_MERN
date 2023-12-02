@@ -16,7 +16,7 @@ import { setAllTransactions } from "../redux/expenseSlice.jsx";
 import Spinner from "../components/Spinner.jsx";
 import Analytics from "../components/Analytics.jsx";
 import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory.js";
-const BASE_URL = 'http://localhost:8080/';
+const BASE_URL = 'https://expense-tracker-mern-ten.vercel.app/';
 
 const Homepage = () => {
   const [showModal, setShowModal] = useState(false);
