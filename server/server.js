@@ -17,7 +17,7 @@ const app = express();
 
 //middlewares
 const corsOptions = {
-    origin: '*',
+    origin: 'https://expense-tracker-sanjay.netlify.app/',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   };
