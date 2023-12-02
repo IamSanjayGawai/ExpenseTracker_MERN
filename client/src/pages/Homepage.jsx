@@ -3,6 +3,7 @@ import Layout from "../components/layout/Layout";
 import { useState } from "react";
 import { Modal, Form, Select, message, Table, DatePicker } from "antd";
 const { RangePicker } = DatePicker;
+import {BASE_URL} from '../services/Helper.js'
 import {
   UnorderedListOutlined,
   AreaChartOutlined,
@@ -167,7 +168,7 @@ const Homepage = () => {
         setLoading(true);
         setLoadingCenterSpinner(true);
         const res = await axios.post(
-          "http://localhost:8080/api/v1/transactions/get-transaction",
+          `${BASE_URL}/api/v1/transactions/get-transaction`,
           {
             userid: user._id,
             frequency,
@@ -194,16 +195,17 @@ const Homepage = () => {
     try {
       setLoadingCenterSpinner(true);
       await axios.post(
-        "http://localhost:8080/api/v1/transactions/delete-transaction",
+       ` ${BASE_URL}api/v1/transactions/delete-transaction`,
         { transactionId: record._id }
       );
       setLoadingCenterSpinner(false);
       message.success("Transaction Deleted Successfully");
+    
 
       // Fetch updated transactions after a successful deletion
       const user = JSON.parse(localStorage.getItem("user"));
       const res = await axios.post(
-        "http://localhost:8080/api/v1/transactions/get-transaction",
+       ` ${BASE_URL}api/v1/transactions/get-transaction`,
         {
           userid: user._id,
           frequency,
@@ -211,6 +213,7 @@ const Homepage = () => {
           type,
         }
       );
+   
       dispatch(setAllTransactions(res.data));
     } catch (error) {
       console.log(error);
@@ -227,7 +230,7 @@ const Homepage = () => {
       setLoadingCenterSpinner(true);
       if (editable) {
         await axios.post(
-          "http://localhost:8080/api/v1/transactions/edit-transaction",
+          `${BASE_URL}api/v1/transactions/edit-transaction`,
           {
             payload: { ...values, userid: user._id },
             transactionId: editable._id,
@@ -235,10 +238,11 @@ const Homepage = () => {
         );
         setLoading(false);
         setLoadingCenterSpinner(false);
+        setShowEditModal(false);
         message.success("Transaction Updated Successfully");
       } else {
         await axios.post(
-          "http://localhost:8080/api/v1/transactions/add-transaction",
+          `${BASE_URL}api/v1/transactions/add-transaction`,
           { ...values, userid: user._id }
         );
         setLoading(false);
@@ -246,10 +250,11 @@ const Homepage = () => {
         message.success("Transaction Added Successfully");
       }
       setShowModal(false);
+     
       form.resetFields(); // reset form data aftyer evry transaction
       // Fetch updated transactions after a successful transaction addition
       const res = await axios.post(
-        "http://localhost:8080/api/v1/transactions/get-transaction",
+        `${BASE_URL}api/v1/transactions/get-transaction`,
         {
           userid: user._id,
           frequency,
@@ -270,7 +275,7 @@ const Homepage = () => {
   };
 
   const handleEditModalCancel = () => {
-    setShowEditModal(false);
+ 
     setEditable(null);
     setLoading(false);
     form.resetFields(); // reset form data after every transaction
@@ -281,6 +286,7 @@ const Homepage = () => {
       date: undefined,
       description: undefined,
     });
+    setShowEditModal(false);
   };
 
   return (

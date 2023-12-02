@@ -26,7 +26,7 @@ app.use('/api/v1/transactions', transactionRoute);
 
 
 //port 
-const PORT  = process.env.PORT || 5000;
+const PORT  = process.env.PORT || 8080;
 
 //listen server
 app.listen(PORT, ()=>{
