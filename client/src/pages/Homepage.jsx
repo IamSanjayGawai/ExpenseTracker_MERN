@@ -3,7 +3,6 @@ import Layout from "../components/layout/Layout";
 import { useState } from "react";
 import { Modal, Form, Select, message, Table, DatePicker } from "antd";
 const { RangePicker } = DatePicker;
-import {BASE_URL} from '../services/Helper.js'
 import {
   UnorderedListOutlined,
   AreaChartOutlined,
@@ -17,6 +16,7 @@ import { setAllTransactions } from "../redux/expenseSlice.jsx";
 import Spinner from "../components/Spinner.jsx";
 import Analytics from "../components/Analytics.jsx";
 import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory.js";
+const BASE_URL = 'http://localhost:8080/';
 
 const Homepage = () => {
   const [showModal, setShowModal] = useState(false);
@@ -168,7 +168,7 @@ const Homepage = () => {
         setLoading(true);
         setLoadingCenterSpinner(true);
         const res = await axios.post(
-          `${BASE_URL}/api/v1/transactions/get-transaction`,
+          `${BASE_URL}api/v1/transactions/get-transaction`,
           {
             userid: user._id,
             frequency,
@@ -248,6 +248,7 @@ const Homepage = () => {
         setLoading(false);
         setLoadingCenterSpinner(false);
         message.success("Transaction Added Successfully");
+        console.log('BaseUrl: ', BASE_URL)
       }
       setShowModal(false);
      
