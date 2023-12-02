@@ -4,16 +4,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Add this import for Axios
 import SubmitSpinner from '../components/SubmitSpinner';
 import Logo from  '../assets/logo/ExpenseTracker.png'
+const BASE_URL = 'https://expensetrackerapp-2nwp.onrender.com/';
+
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  
 
   // form submit antd takes values instead of events
   const submitHandler = async (values) => {
     try {
       setLoading(true);
-      const { data } = await axios.post('http://localhost:8080/api/v1/users/login', values);
+      const { data } = await axios.post(`${BASE_URL}api/v1/users/login`, values);
       setLoading(false);
       message.success('Login Successful');
 
