@@ -3,6 +3,7 @@ import Layout from "../components/layout/Layout";
 import { useState } from "react";
 import { Modal, Form, Select, message, Table, DatePicker } from "antd";
 const { RangePicker } = DatePicker;
+import {BASE_URL} from '../services/Helper.js'
 import {
   UnorderedListOutlined,
   AreaChartOutlined,
@@ -29,7 +30,7 @@ const Homepage = () => {
   const [viewData, setViewData] = useState("table"); // for view data
   const [editable, setEditable] = useState(null); // for edit data
 
-///////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
   // for showing transaction count per page
   const paginationOptions = {
     pageSize: 5,
@@ -39,7 +40,7 @@ const Homepage = () => {
   const tableScrollOptions = {
     x: "max-content", // Set the width to 'max-content' to allow horizontal scrolling
   };
-///////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////
   const { loadingSpinner, allTransactions } = useSelector(
     (state) => state.expense
   );
@@ -64,18 +65,17 @@ const Homepage = () => {
       render: (text, record) => ({
         props: {
           style: {
-            background:
-              record.type === "expense"
-                ? "	#FFDAB9"
-                : "	#98FB98",
+            background: record.type === "expense" ? "	#FFDAB9" : "	#98FB98",
           },
         },
         children: (
           <b>
             <span
-              className={`${record.type === "expense" ? "price-text-red" : "price-text-green"} ${
-                record.type === "expense" ? "expense-amount" : ""
-              }`}
+              className={`${
+                record.type === "expense"
+                  ? "price-text-red"
+                  : "price-text-green"
+              } ${record.type === "expense" ? "expense-amount" : ""}`}
             >
               <span className="text-dark">
                 {record.type === "expense" ? "- ₹" : "+₹"}
@@ -168,7 +168,7 @@ const Homepage = () => {
         setLoading(true);
         setLoadingCenterSpinner(true);
         const res = await axios.post(
-          "http://localhost:8080/api/v1/transactions/get-transaction",
+          `${BASE_URL}/api/v1/transactions/get-transaction`,
           {
             userid: user._id,
             frequency,
@@ -190,35 +190,37 @@ const Homepage = () => {
   }, [frequency, selectedDate, type]);
   // table data
 
-
-
-
-
   // Delete transaction
   const handleDelete = async (record) => {
     try {
       setLoadingCenterSpinner(true);
-      await axios.post('http://localhost:8080/api/v1/transactions/delete-transaction', { transactionId: record._id });
+      await axios.post(
+       ` ${BASE_URL}api/v1/transactions/delete-transaction`,
+        { transactionId: record._id }
+      );
       setLoadingCenterSpinner(false);
-      message.success('Transaction Deleted Successfully');
-  
+      message.success("Transaction Deleted Successfully");
+    
+
       // Fetch updated transactions after a successful deletion
       const user = JSON.parse(localStorage.getItem("user"));
-      const res = await axios.post('http://localhost:8080/api/v1/transactions/get-transaction', {
-        userid: user._id,
-        frequency,
-        selectedDate,
-        type,
-      });
+      const res = await axios.post(
+       ` ${BASE_URL}api/v1/transactions/get-transaction`,
+        {
+          userid: user._id,
+          frequency,
+          selectedDate,
+          type,
+        }
+      );
+   
       dispatch(setAllTransactions(res.data));
     } catch (error) {
       console.log(error);
       setLoadingCenterSpinner(false);
-      message.error('Unable to Delete');
+      message.error("Unable to Delete");
     }
   };
-
-
 
   // Handle form submission
   const handleSubmit = async (values) => {
@@ -226,30 +228,33 @@ const Homepage = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
       setLoadingCenterSpinner(true);
-    if(editable){
-      await axios.post(
-        "http://localhost:8080/api/v1/transactions/edit-transaction",
-        { payload:{...values, userid: user._id},
-        transactionId:editable._id
-       }
-      );
-      setLoading(false);
-      setLoadingCenterSpinner(false);
-      message.success("Transaction Updated Successfully");
-    }else{
-      await axios.post(
-        "http://localhost:8080/api/v1/transactions/add-transaction",
-        { ...values, userid: user._id }
-      );
-      setLoading(false);
-      setLoadingCenterSpinner(false);
-      message.success("Transaction Added Successfully");
-    }
+      if (editable) {
+        await axios.post(
+          `${BASE_URL}api/v1/transactions/edit-transaction`,
+          {
+            payload: { ...values, userid: user._id },
+            transactionId: editable._id,
+          }
+        );
+        setLoading(false);
+        setLoadingCenterSpinner(false);
+        setShowEditModal(false);
+        message.success("Transaction Updated Successfully");
+      } else {
+        await axios.post(
+          `${BASE_URL}api/v1/transactions/add-transaction`,
+          { ...values, userid: user._id }
+        );
+        setLoading(false);
+        setLoadingCenterSpinner(false);
+        message.success("Transaction Added Successfully");
+      }
       setShowModal(false);
+     
       form.resetFields(); // reset form data aftyer evry transaction
       // Fetch updated transactions after a successful transaction addition
       const res = await axios.post(
-        "http://localhost:8080/api/v1/transactions/get-transaction",
+        `${BASE_URL}api/v1/transactions/get-transaction`,
         {
           userid: user._id,
           frequency,
@@ -269,10 +274,8 @@ const Homepage = () => {
     form.resetFields(); // reset form data aftyer evry transaction
   };
 
-
-
   const handleEditModalCancel = () => {
-    setShowEditModal(false);
+ 
     setEditable(null);
     setLoading(false);
     form.resetFields(); // reset form data after every transaction
@@ -283,8 +286,8 @@ const Homepage = () => {
       date: undefined,
       description: undefined,
     });
+    setShowEditModal(false);
   };
-
 
   return (
     <Layout>
@@ -379,123 +382,128 @@ const Homepage = () => {
         {/* showng  all data in table end  */}
 
         {/* Start Model */}
-      <Modal
-        title="Add Transaction"
-        open={showModal}
-        onCancel={handleModalCancel}
-        footer={false}
-      >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item label="Amount" name="amount" required>
-            <input type="number" className="form-control" required />
-          </Form.Item>
-          <Form.Item label="Type" name="type" required>
-            <Select>
-              <Select.Option value="income">Income</Select.Option>
-              <Select.Option value="expense">Expense</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Category" name="category" required>
-            <Select>
-              <Select.Option value="salary">Salary</Select.Option>
-              <Select.Option value="tip">Tip</Select.Option>
-              <Select.Option value="freeLance">Freelance</Select.Option>
-              <Select.Option value="food">Food</Select.Option>
-              <Select.Option value="movie">Movie</Select.Option>
-              <Select.Option value="bills">Bills</Select.Option>
-              <Select.Option value="medical">Medical</Select.Option>
-              <Select.Option value="grocery">Grocery</Select.Option>
-              <Select.Option value="shopping">Shopping</Select.Option>
-              <Select.Option value="travel">Travel</Select.Option>
-              <Select.Option value="other">Other</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Date" name="date" required>
-            <input type="date" className="form-control" required />
-          </Form.Item>
-          <Form.Item label="Description (Optional)" name="description">
-            <input type="text" className="form-control" />
-          </Form.Item>
-          {/* <Form.Item label="Reference" name="reference">
+        <Modal
+          title="Add Transaction"
+          open={showModal}
+          onCancel={handleModalCancel}
+          footer={false}
+        >
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            <Form.Item label="Amount" name="amount" required>
+              <input type="number" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Type" name="type" required>
+              <Select>
+                <Select.Option value="income">Income</Select.Option>
+                <Select.Option value="expense">Expense</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Category" name="category" required>
+              <Select>
+                <Select.Option value="salary">Salary</Select.Option>
+                <Select.Option value="tip">Tip</Select.Option>
+                <Select.Option value="freeLance">Freelance</Select.Option>
+                <Select.Option value="food">Food</Select.Option>
+                <Select.Option value="movie">Movie</Select.Option>
+                <Select.Option value="bills">Bills</Select.Option>
+                <Select.Option value="medical">Medical</Select.Option>
+                <Select.Option value="grocery">Grocery</Select.Option>
+                <Select.Option value="shopping">Shopping</Select.Option>
+                <Select.Option value="travel">Travel</Select.Option>
+                <Select.Option value="other">Other</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Date" name="date" required>
+              <input type="date" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Description (Optional)" name="description">
+              <input type="text" className="form-control" />
+            </Form.Item>
+            {/* <Form.Item label="Reference" name="reference">
           <input type="text" className="form-control" />
         </Form.Item> */}
 
-          <div className="d-flex justify-content-end">
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={loading}
-            >
-              <span
-                className={loading ? "spinner-border spinner-border-sm" : " "}
-                role="status"
-                aria-hidden="true"
-              />
-              {loading ? "Saving..." : "Save"}
-            </button>
-          </div>
-        </Form>
-      </Modal>
+            <div className="d-flex justify-content-end">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
+                <span
+                  className={loading ? "spinner-border spinner-border-sm" : " "}
+                  role="status"
+                  aria-hidden="true"
+                />
+                {loading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </Form>
+        </Modal>
         {/* End Model */}
 
-           {/* Start Edit Model */}
-           <Modal
+        {/* Start Edit Model */}
+        <Modal
           title="Edit Transaction"
           open={showEditModal}
           onCancel={handleEditModalCancel}
           footer={false}
         >
           {/* Create a new form for editing transactions */}
-          <Form form={form} layout="vertical" onFinish={handleSubmit}  initialValues={editable}>
-          <Form.Item label="Amount" name="amount" required>
-            <input type="number" className="form-control" required />
-          </Form.Item>
-          <Form.Item label="Type" name="type" required>
-            <Select>
-              <Select.Option value="income">Income</Select.Option>
-              <Select.Option value="expense">Expense</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Category" name="category" required>
-            <Select>
-              <Select.Option value="salary">Salary</Select.Option>
-              <Select.Option value="tip">Tip</Select.Option>
-              <Select.Option value="freeLance">Freelance</Select.Option>
-              <Select.Option value="food">Food</Select.Option>
-              <Select.Option value="movie">Movie</Select.Option>
-              <Select.Option value="bills">Bills</Select.Option>
-              <Select.Option value="medical">Medical</Select.Option>
-              <Select.Option value="grocery">Grocery</Select.Option>
-              <Select.Option value="shopping">Shopping</Select.Option>
-              <Select.Option value="travel">Travel</Select.Option>
-              <Select.Option value="other">Other</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item label="Date" name="date" required>
-            <input type="date" className="form-control" required />
-          </Form.Item>
-          <Form.Item label="Description (Optional)" name="description">
-            <input type="text" className="form-control" />
-          </Form.Item>
-          {/* <Form.Item label="Reference" name="reference">
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            initialValues={editable}
+          >
+            <Form.Item label="Amount" name="amount" required>
+              <input type="number" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Type" name="type" required>
+              <Select>
+                <Select.Option value="income">Income</Select.Option>
+                <Select.Option value="expense">Expense</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Category" name="category" required>
+              <Select>
+                <Select.Option value="salary">Salary</Select.Option>
+                <Select.Option value="tip">Tip</Select.Option>
+                <Select.Option value="freeLance">Freelance</Select.Option>
+                <Select.Option value="food">Food</Select.Option>
+                <Select.Option value="movie">Movie</Select.Option>
+                <Select.Option value="bills">Bills</Select.Option>
+                <Select.Option value="medical">Medical</Select.Option>
+                <Select.Option value="grocery">Grocery</Select.Option>
+                <Select.Option value="shopping">Shopping</Select.Option>
+                <Select.Option value="travel">Travel</Select.Option>
+                <Select.Option value="other">Other</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="Date" name="date" required>
+              <input type="date" className="form-control" required />
+            </Form.Item>
+            <Form.Item label="Description (Optional)" name="description">
+              <input type="text" className="form-control" />
+            </Form.Item>
+            {/* <Form.Item label="Reference" name="reference">
           <input type="text" className="form-control" />
         </Form.Item> */}
 
-          <div className="d-flex justify-content-end">
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={loading}
-            >
-              <span
-                className={loading ? "spinner-border spinner-border-sm" : " "}
-                role="status"
-                aria-hidden="true"
-              />
-              {loading ? "Saving..." : "Save"}
-            </button>
-          </div>
-        </Form>
+            <div className="d-flex justify-content-end">
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={loading}
+              >
+                <span
+                  className={loading ? "spinner-border spinner-border-sm" : " "}
+                  role="status"
+                  aria-hidden="true"
+                />
+                {loading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </Form>
         </Modal>
         {/* End Edit Model */}
       </div>
