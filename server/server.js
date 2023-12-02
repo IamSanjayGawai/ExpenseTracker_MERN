@@ -27,7 +27,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.get('/', (req, res)=>{
-    res.send('API is running');
+    res.send(<h2>API is running</h2>)
+    ;
 })
                                              
 app.use('/api/v1/users', userRoute);
