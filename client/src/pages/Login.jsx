@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Add this import for Axios
 import SubmitSpinner from '../components/SubmitSpinner';
 import Logo from  '../assets/logo/ExpenseTracker.png'
-const BASE_URL = 'https://expensetrackerapp-2nwp.onrender.com/';
+import {BASE_URL} from '../services/Helper.js'
 
 
 const Login = () => {
