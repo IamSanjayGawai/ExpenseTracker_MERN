@@ -16,7 +16,7 @@ import { setAllTransactions } from "../redux/expenseSlice.jsx";
 import Spinner from "../components/Spinner.jsx";
 import Analytics from "../components/Analytics.jsx";
 import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory.js";
-const BASE_URL = 'https://expensetrackerapp-2nwp.onrender.com/';
+import {BASE_URL} from '../services/Helper.js'
 
 const Homepage = () => {
   const [showModal, setShowModal] = useState(false);

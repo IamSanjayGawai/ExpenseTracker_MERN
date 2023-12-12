@@ -29,7 +29,5 @@ export function ProtectedRoutes (props) {
   else{
     return <Navigate to='/expense-tracker/user/login' replace />
   }
-
 }
-
 export default App

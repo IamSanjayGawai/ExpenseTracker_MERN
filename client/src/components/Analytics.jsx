@@ -50,6 +50,11 @@ const Analytics = ({ allTransactions }) => {
   const totalExpenseTurnoverPercent =
     totalTurnover === 0 ? 0 : (totalExpenseTurnover / totalTurnover) * 100;
 
+    //total turnover
+  const remainingAmount = totalIncomeTurnover - totalExpenseTurnover;
+
+
+
   return (
     <>
       <div
@@ -100,10 +105,16 @@ const Analytics = ({ allTransactions }) => {
         <div className="col-12 col-sm-8  col-md-3 mb-4">
           <div className="card bx-sd4" style={{ height: "56vh" }}>
             <div className="card-header ">
-              <h4 className="card-title d-flex ">
+              {/* <h4 className="card-title d-flex ">
                 Total TurnOver:{" "}
                 <h5 className="text-primary d-flex mt-1 mx-3">
                   ₹{totalTurnover}
+                </h5>
+              </h4> */}
+                  <h4 className="card-title d-flex ">
+                Total Amount:{" "}
+                <h5 className="text-primary d-flex mt-1 mx-3">
+                  ₹{remainingAmount}
                 </h5>
               </h4>
             </div>
@@ -134,6 +145,7 @@ const Analytics = ({ allTransactions }) => {
                   {totalExpenseTurnover}
                 </h6>
               </div>
+             
             </div>
           </div>
         </div>
